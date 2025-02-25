@@ -57,7 +57,6 @@
 
         /* Thank You Button */
         #thank-you-btn {
-            display: none;
             position: absolute;
             bottom: 60px;
             background: #c49a6c;
@@ -67,12 +66,7 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: background 0.3s;
-            animation: fadeIn 2s ease-in 9s forwards;
-        }
-
-        #thank-you-btn:hover {
-            background: #a07954;
+            display: none;
         }
 
         /* Pop-up Message */
@@ -88,7 +82,7 @@
             font-size: 2rem;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
-            animation: fadeIn 2s ease-in 0.5s forwards;
+            text-align: center;
         }
 
         /* Fade-in and Fade-out Effects */
@@ -122,13 +116,12 @@
         canvas.height = window.innerHeight;
 
         class Firework {
-            constructor(x, y, color, size, velocity, explodeTime) {
+            constructor(x, y, color) {
                 this.x = x;
                 this.y = y;
                 this.color = color;
-                this.size = size;
-                this.velocity = velocity;
-                this.explodeTime = explodeTime;
+                this.size = 5;
+                this.velocity = Math.random() * 4 + 2;
                 this.exploded = false;
                 this.particles = [];
             }
@@ -136,13 +129,12 @@
             update() {
                 if (!this.exploded) {
                     this.y -= this.velocity;
-                    if (this.explodeTime <= 0) {
+                    if (this.y < window.innerHeight / 3) {
                         this.exploded = true;
-                        for (let i = 0; i < 50; i++) { 
+                        for (let i = 0; i < 50; i++) {
                             this.particles.push(new Particle(this.x, this.y, this.color));
                         }
                     }
-                    this.explodeTime--;
                 }
                 this.particles.forEach(p => p.update());
             }
@@ -152,7 +144,7 @@
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fillStyle = this.color;
-                    ctx.shadowBlur = 15;
+                    ctx.shadowBlur = 10;
                     ctx.shadowColor = this.color;
                     ctx.fill();
                 }
@@ -165,10 +157,10 @@
                 this.x = x;
                 this.y = y;
                 this.color = color;
-                this.size = Math.random() * 5;
+                this.size = Math.random() * 3;
                 this.velocity = {
-                    x: (Math.random() - 0.5) * 6,
-                    y: (Math.random() - 0.5) * 6
+                    x: (Math.random() - 0.5) * 4,
+                    y: (Math.random() - 0.5) * 4
                 };
                 this.alpha = 1;
             }
@@ -184,8 +176,6 @@
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = this.color;
                 ctx.fill();
                 ctx.globalAlpha = 1;
             }
@@ -207,15 +197,13 @@
 
         function launchFireworks() {
             let colors = ["#ffdfba", "#ffb3ba", "#ffd6a5"];
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 5; i++) {
                 setTimeout(() => {
                     let x = Math.random() * canvas.width;
-                    let y = canvas.height;
                     let color = colors[Math.floor(Math.random() * colors.length)];
-                    fireworks.push(new Firework(x, y, color, 10, 6, 50));
+                    fireworks.push(new Firework(x, canvas.height, color));
                 }, i * 600);
             }
-            setTimeout(() => document.getElementById("thank-you-btn").style.display = "block", 9000);
         }
 
         function launchHeartFirework() {
@@ -223,11 +211,12 @@
                 let heartParticles = [];
                 for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
                     let x = Math.cos(angle) * 80 + canvas.width / 2;
-                    let y = Math.sin(angle) * 80 + canvas.height / 2;
+                    let y = Math.sin(angle) * 80 + canvas.height / 3;
                     heartParticles.push(new Particle(x, y, "#ffb3ba"));
                 }
                 fireworks.push({ exploded: true, particles: heartParticles });
-            }, 7000);
+                setTimeout(() => document.getElementById("thank-you-btn").style.display = "block", 2000);
+            }, 5000);
         }
 
         function showPopup() {
