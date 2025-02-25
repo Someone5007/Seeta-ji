@@ -28,15 +28,15 @@
             pointer-events: none;
         }
 
-        /* Birthday Text */
-        #birthday-message {
+        /* Centered Content */
+        #content {
             position: absolute;
             text-align: center;
             font-size: 4rem;
             font-weight: bold;
             color: #ffdfba; /* Light pastel */
             opacity: 0;
-            animation: fadeIn 2s ease-in 3s forwards;
+            animation: fadeIn 2s ease-in 3s forwards, fadeOut 2s ease-in 6s forwards;
         }
 
         #seeta-ji {
@@ -44,21 +44,9 @@
             color: #ffb3ba; /* Soft pink */
         }
 
-        /* Your BBG Text */
-        #bbg-text {
-            position: absolute;
-            bottom: 20px;
-            right: 30px;
-            font-size: 1.5rem;
-            color: #ffd6a5;
-            opacity: 0;
-            animation: fadeIn 2s ease-in 7s forwards;
-        }
-
         /* Thank You Button */
         #thank-you-btn {
             position: absolute;
-            bottom: 60px;
             background: #c49a6c;
             color: white;
             font-size: 1.5rem;
@@ -67,6 +55,7 @@
             border-radius: 10px;
             cursor: pointer;
             display: none;
+            animation: fadeIn 2s ease-in 7s forwards;
         }
 
         /* Pop-up Message */
@@ -83,6 +72,7 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
             text-align: center;
+            animation: fadeIn 2s ease-in 0.5s forwards;
         }
 
         /* Fade-in and Fade-out Effects */
@@ -99,14 +89,13 @@
 
     <canvas id="fireworks"></canvas>
 
-    <div id="birthday-message">
+    <div id="content">
         Happy Birthday <br>
         <span id="seeta-ji">Seeta ji</span>
     </div>
 
     <button id="thank-you-btn">Thank You</button>
-    <div id="popup">Hope your day goes well.</div>
-    <div id="bbg-text">~Your BBG</div>
+    <div id="popup">Hope your day goes well.<br>~Your BBG</div>
 
     <script>
         const canvas = document.getElementById("fireworks");
@@ -199,7 +188,7 @@
             let colors = ["#ffdfba", "#ffb3ba", "#ffd6a5"];
             for (let i = 0; i < 5; i++) {
                 setTimeout(() => {
-                    let x = Math.random() * canvas.width;
+                    let x = canvas.width / 2;
                     let color = colors[Math.floor(Math.random() * colors.length)];
                     fireworks.push(new Firework(x, canvas.height, color));
                 }, i * 600);
@@ -221,7 +210,10 @@
 
         function showPopup() {
             document.getElementById("popup").style.display = "block";
-            setTimeout(() => document.body.style.opacity = "0", 5000);
+            setTimeout(() => {
+                document.body.style.transition = "opacity 3s";
+                document.body.style.opacity = "0";
+            }, 5000);
         }
 
         document.getElementById("thank-you-btn").addEventListener("click", showPopup);
