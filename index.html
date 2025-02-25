@@ -5,15 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday BBG</title>
     <style>
-        /* Background */
+        /* Background: Dark Blue Night Sky with Stars */
         body {
             margin: 0;
             overflow: hidden;
-            background: darkblue;
+            background: radial-gradient(circle, #1a1a40, #000022);
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Starry Night Effect */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.5;
         }
 
         /* Fireworks Canvas */
@@ -28,33 +40,60 @@
 
         /* Birthday Text */
         #birthday-message {
-            position: absolute;
+            position: relative;
             text-align: center;
-            font-size: 4rem;
+            font-size: 5rem;
             font-weight: bold;
             opacity: 0;
-            animation: fadeIn 2s ease-in 3s forwards, fadeOut 2s ease-in 10s forwards;
+            animation: fadeIn 2s ease-in 3s forwards;
         }
 
-        /* Multicolor Happy Birthday */
-        .multicolor {
-            background-image: linear-gradient(45deg, red, yellow, green, cyan, blue, magenta);
-            -webkit-background-clip: text;
-            color: transparent;
+        /* Light Aesthetic Colors */
+        .word {
+            display: block;
         }
+        .happy { color: #ffdfba; }  /* Light Peach */
+        .birthday { color: #ffb3ba; } /* Soft Pink */
+        .bbg { color: #ffd6a5; font-size: 3rem; } /* Light Yellow */
 
-        /* Pink BBG */
-        .bbg {
-            color: pink;
-        }
-
-        /* Fade-in and Fade-out */
+        /* Fade-in effect */
         @keyframes fadeIn {
             to { opacity: 1; }
         }
-        @keyframes fadeOut {
-            to { opacity: 0; }
+
+        /* Thank You Button */
+        #thank-you-btn {
+            position: absolute;
+            bottom: 20px;
+            background: #c49a6c;
+            color: white;
+            font-size: 1.5rem;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
         }
+
+        #thank-you-btn:hover {
+            background: #a07954;
+        }
+
+        /* Pop-up Message */
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #c49a6c;
+            color: white;
+            padding: 20px;
+            font-size: 2rem;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+        }
+
     </style>
 </head>
 <body>
@@ -62,10 +101,13 @@
     <canvas id="fireworks"></canvas>
 
     <div id="birthday-message">
-        <span class="multicolor">Happy</span> 
-        <span class="multicolor">Birthday</span>
-        <span class="bbg">BBG</span>
+        <span class="word happy">Happy</span> 
+        <span class="word birthday">Birthday</span>
+        <span class="word bbg">BBG</span>
     </div>
+
+    <button id="thank-you-btn">Thank You</button>
+    <div id="popup">Hope your day goes well.</div>
 
     <script>
         const canvas = document.getElementById("fireworks");
@@ -91,7 +133,7 @@
                     this.y -= this.velocity;
                     if (this.explodeTime <= 0) {
                         this.exploded = true;
-                        for (let i = 0; i < 30; i++) {
+                        for (let i = 0; i < 50; i++) { 
                             this.particles.push(new Particle(this.x, this.y, this.color));
                         }
                     }
@@ -105,7 +147,7 @@
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fillStyle = this.color;
-                    ctx.shadowBlur = 10;
+                    ctx.shadowBlur = 15;
                     ctx.shadowColor = this.color;
                     ctx.fill();
                 }
@@ -118,10 +160,10 @@
                 this.x = x;
                 this.y = y;
                 this.color = color;
-                this.size = Math.random() * 3;
+                this.size = Math.random() * 5;
                 this.velocity = {
-                    x: (Math.random() - 0.5) * 4,
-                    y: (Math.random() - 0.5) * 4
+                    x: (Math.random() - 0.5) * 6,
+                    y: (Math.random() - 0.5) * 6
                 };
                 this.alpha = 1;
             }
@@ -137,7 +179,7 @@
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
-                ctx.shadowBlur = 10;
+                ctx.shadowBlur = 20;
                 ctx.shadowColor = this.color;
                 ctx.fill();
                 ctx.globalAlpha = 1;
@@ -159,14 +201,14 @@
         }
 
         function launchFireworks() {
-            let colors = ["red", "yellow", "green", "blue", "pink", "white"];
-            let delay = 500;
-            for (let i = 0; i < 10; i++) {
+            let colors = ["#ffdfba", "#ffb3ba", "#ffd6a5", "#ffccf9", "#e6cfff"];
+            let delay = 600;
+            for (let i = 0; i < 8; i++) {
                 setTimeout(() => {
                     let x = Math.random() * canvas.width;
                     let y = canvas.height;
                     let color = colors[Math.floor(Math.random() * colors.length)];
-                    fireworks.push(new Firework(x, y, color, 5, 5, 40));
+                    fireworks.push(new Firework(x, y, color, 10, 6, 50));
                 }, i * delay);
             }
         }
@@ -175,24 +217,25 @@
             setTimeout(() => {
                 let heartParticles = [];
                 for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
-                    let x = Math.cos(angle) * 50 + canvas.width / 2;
-                    let y = Math.sin(angle) * 50 + canvas.height / 2;
-                    heartParticles.push(new Particle(x, y, "red"));
+                    let x = Math.cos(angle) * 80 + canvas.width / 2;
+                    let y = Math.sin(angle) * 80 + canvas.height / 2;
+                    heartParticles.push(new Particle(x, y, "#ffb3ba"));
                 }
                 fireworks.push({ exploded: true, particles: heartParticles });
             }, 7000);
         }
 
-        function fadeOutEverything() {
+        function showPopup() {
+            document.getElementById("popup").style.display = "block";
             setTimeout(() => {
-                document.body.style.transition = "opacity 3s";
-                document.body.style.opacity = 0;
-            }, 10000);
+                document.getElementById("popup").style.display = "none";
+            }, 3000);
         }
+
+        document.getElementById("thank-you-btn").addEventListener("click", showPopup);
 
         launchFireworks();
         launchHeartFirework();
-        fadeOutEverything();
         animate();
     </script>
 
