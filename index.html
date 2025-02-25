@@ -3,29 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lil Bakchodi</title>
+    <title>Happy Birthday</title>
     <style>
-        /* Background: Dark Blue Night Sky with Stars */
+        /* Night Sky Background */
         body {
             margin: 0;
             overflow: hidden;
-            background: radial-gradient(circle, #1a1a40, #000022);
+            background: #020d19 url('https://www.transparenttextures.com/patterns/stardust.png');
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
             flex-direction: column;
             position: relative;
-        }
-
-        /* Starry Night Effect */
-        body::before {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.5;
         }
 
         /* Fireworks Canvas */
@@ -40,31 +30,36 @@
 
         /* Birthday Text */
         #birthday-message {
-            position: relative;
+            position: absolute;
             text-align: center;
-            font-size: 5rem;
+            font-size: 4rem;
             font-weight: bold;
+            color: #ffdfba; /* Light pastel */
             opacity: 0;
             animation: fadeIn 2s ease-in 3s forwards;
         }
 
-        /* Light Aesthetic Colors */
-        .word {
-            display: block;
+        #seeta-ji {
+            font-size: 3rem;
+            color: #ffb3ba; /* Soft pink */
         }
-        .happy { color: #ffdfba; }  /* Light Peach */
-        .birthday { color: #ffb3ba; } /* Soft Pink */
-        .bbg { color: #ffd6a5; font-size: 3rem; } /* Light Yellow */
 
-        /* Fade-in effect */
-        @keyframes fadeIn {
-            to { opacity: 1; }
+        /* Your BBG Text */
+        #bbg-text {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 1.5rem;
+            color: #ffd6a5;
+            opacity: 0;
+            animation: fadeIn 2s ease-in 7s forwards;
         }
 
         /* Thank You Button */
         #thank-you-btn {
+            display: none;
             position: absolute;
-            bottom: 20px;
+            bottom: 60px;
             background: #c49a6c;
             color: white;
             font-size: 1.5rem;
@@ -73,6 +68,7 @@
             border-radius: 10px;
             cursor: pointer;
             transition: background 0.3s;
+            animation: fadeIn 2s ease-in 9s forwards;
         }
 
         #thank-you-btn:hover {
@@ -92,8 +88,17 @@
             font-size: 2rem;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+            animation: fadeIn 2s ease-in 0.5s forwards;
         }
 
+        /* Fade-in and Fade-out Effects */
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -101,13 +106,13 @@
     <canvas id="fireworks"></canvas>
 
     <div id="birthday-message">
-        <span class="word happy">Happy</span> 
-        <span class="word birthday">Birthday</span>
-        <span class="word bbg">BBG</span>
+        Happy Birthday <br>
+        <span id="seeta-ji">Seeta ji</span>
     </div>
 
     <button id="thank-you-btn">Thank You</button>
     <div id="popup">Hope your day goes well.</div>
+    <div id="bbg-text">~Your BBG</div>
 
     <script>
         const canvas = document.getElementById("fireworks");
@@ -201,16 +206,16 @@
         }
 
         function launchFireworks() {
-            let colors = ["#ffdfba", "#ffb3ba", "#ffd6a5", "#ffccf9", "#e6cfff"];
-            let delay = 600;
-            for (let i = 0; i < 8; i++) {
+            let colors = ["#ffdfba", "#ffb3ba", "#ffd6a5"];
+            for (let i = 0; i < 6; i++) {
                 setTimeout(() => {
                     let x = Math.random() * canvas.width;
                     let y = canvas.height;
                     let color = colors[Math.floor(Math.random() * colors.length)];
                     fireworks.push(new Firework(x, y, color, 10, 6, 50));
-                }, i * delay);
+                }, i * 600);
             }
+            setTimeout(() => document.getElementById("thank-you-btn").style.display = "block", 9000);
         }
 
         function launchHeartFirework() {
@@ -227,9 +232,7 @@
 
         function showPopup() {
             document.getElementById("popup").style.display = "block";
-            setTimeout(() => {
-                document.getElementById("popup").style.display = "none";
-            }, 3000);
+            setTimeout(() => document.body.style.opacity = "0", 5000);
         }
 
         document.getElementById("thank-you-btn").addEventListener("click", showPopup);
