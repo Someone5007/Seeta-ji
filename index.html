@@ -14,8 +14,18 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            flex-direction: column;
             position: relative;
+        }
+
+        /* Centered content container */
+        #content-container {
+            text-align: center;
+            position: relative;
+            width: 80vw; /* Adjust the width to control how much space fireworks and text take */
+            height: 60vh; /* Adjust the height as needed */
+            max-width: 800px; /* Prevent content from becoming too wide */
+            max-height: 600px; /* Prevent content from becoming too tall */
+            overflow: hidden;
         }
 
         /* Fireworks Canvas */
@@ -28,11 +38,9 @@
             pointer-events: none;
         }
 
-        /* Centered Content */
+        /* Centered Text */
         #content {
-            position: absolute;
-            text-align: center;
-            font-size: 4rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: #ffdfba; /* Light pastel */
             opacity: 0;
@@ -40,13 +48,14 @@
         }
 
         #seeta-ji {
-            font-size: 3rem;
+            font-size: 2rem;
             color: #ffb3ba; /* Soft pink */
         }
 
         /* Thank You Button */
         #thank-you-btn {
             position: absolute;
+            bottom: 20px;
             background: #c49a6c;
             color: white;
             font-size: 1.5rem;
@@ -87,15 +96,17 @@
 </head>
 <body>
 
-    <canvas id="fireworks"></canvas>
+    <div id="content-container">
+        <canvas id="fireworks"></canvas>
 
-    <div id="content">
-        Happy Birthday <br>
-        <span id="seeta-ji">Seeta ji</span>
+        <div id="content">
+            Happy Birthday <br>
+            <span id="seeta-ji">Seeta ji</span>
+        </div>
+
+        <button id="thank-you-btn">Thank You</button>
+        <div id="popup">Hope your day goes well.<br>~Your BBG</div>
     </div>
-
-    <button id="thank-you-btn">Thank You</button>
-    <div id="popup">Hope your day goes well.<br>~Your BBG</div>
 
     <script>
         const canvas = document.getElementById("fireworks");
@@ -190,7 +201,7 @@
                 setTimeout(() => {
                     let x = canvas.width / 2;
                     let color = colors[Math.floor(Math.random() * colors.length)];
-                    fireworks.push(new Firework(x, canvas.height, color));
+                    fireworks.push(new Firework(x, canvas.height / 3, color));
                 }, i * 600);
             }
         }
