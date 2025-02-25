@@ -3,95 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Will You Forgive Me?</title>
+    <title>Happy Birthday BBG</title>
     <style>
+        /* Background */
         body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: #f5ebe0; /* Beige background */
-            transition: 0.5s ease-in-out;
+            margin: 0;
             overflow: hidden;
+            background: darkblue;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
-        #container {
-            position: relative;
-            margin-top: 20vh;
-        }
-        h1 {
-            color: #5c4033; /* Dark brown */
-            font-size: 2em;
-        }
-        .btn {
-            font-size: 1.5em;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            margin: 20px;
-            border-radius: 10px;
+
+        /* Fireworks Canvas */
+        canvas {
             position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
-        #yes {
-            background-color: #f5d7b7; /* Light beige */
-            color: #5c4033;
-            left: 40%;
-        }
-        #no {
-            background-color: #d4a373; /* Light brown */
-            color: #5c4033;
-            left: 55%;
-        }
-        #no span {
-            font-size: 1.2em;
-        }
-        #flowers {
-            display: none;
+
+        /* Birthday Text */
+        #birthday-message {
             position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: auto;
-        }
-        #yay {
-            display: none;
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2em;
+            text-align: center;
+            font-size: 4rem;
             font-weight: bold;
-            color: #5c4033; /* Dark brown */
+            opacity: 0;
+            animation: fadeIn 2s ease-in 3s forwards, fadeOut 2s ease-in 10s forwards;
         }
-        .blur {
-            filter: blur(5px);
+
+        /* Multicolor Happy Birthday */
+        .multicolor {
+            background-image: linear-gradient(45deg, red, yellow, green, cyan, blue, magenta);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Pink BBG */
+        .bbg {
+            color: pink;
+        }
+
+        /* Fade-in and Fade-out */
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <h1 id="question">Will you forgive me?</h1>
-        <button id="yes" class="btn" onclick="showFlowers()">Yes</button>
-        <button id="no" class="btn" onclick="moveNoButton()">No <span>😢</span></button>
+
+    <canvas id="fireworks"></canvas>
+
+    <div id="birthday-message">
+        <span class="multicolor">Happy</span> 
+        <span class="multicolor">Birthday</span>
+        <span class="bbg">BBG</span>
     </div>
 
-    <img id="flowers" src="https://i.imgur.com/JZjxgq3.png" alt="Bouquet of roses and tulips">
-    <div id="yay">Yay!</div>
-
     <script>
-        function showFlowers() {
-            document.getElementById("flowers").style.display = "block";
-            document.getElementById("yay").style.display = "block";
-            document.getElementById("container").classList.add("blur");
+        const canvas = document.getElementById("fireworks");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Firework {
+            constructor(x, y, color, size, velocity, explodeTime) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.size = size;
+                this.velocity = velocity;
+                this.explodeTime = explodeTime;
+                this.exploded = false;
+                this.particles = [];
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.y -= this.velocity;
+                    if (this.explodeTime <= 0) {
+                        this.exploded = true;
+                        for (let i = 0; i < 30; i++) {
+                            this.particles.push(new Particle(this.x, this.y, this.color));
+                        }
+                    }
+                    this.explodeTime--;
+                }
+                this.particles.forEach(p => p.update());
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                }
+                this.particles.forEach(p => p.draw());
+            }
         }
 
-        function moveNoButton() {
-            let noButton = document.getElementById("no");
-            let maxWidth = window.innerWidth - noButton.offsetWidth;
-            let maxHeight = window.innerHeight - noButton.offsetHeight;
-            let newX = Math.random() * maxWidth;
-            let newY = Math.random() * maxHeight;
-            noButton.style.left = `${newX}px`;
-            noButton.style.top = `${newY}px`;
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.size = Math.random() * 3;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 4,
+                    y: (Math.random() - 0.5) * 4
+                };
+                this.alpha = 1;
+            }
+
+            update() {
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.02;
+            }
+
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
         }
+
+        let fireworks = [];
+        function animate() {
+            ctx.fillStyle = "rgba(0, 0, 30, 0.2)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+                if (firework.exploded && firework.particles.every(p => p.alpha <= 0)) {
+                    fireworks.splice(index, 1);
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        function launchFireworks() {
+            let colors = ["red", "yellow", "green", "blue", "pink", "white"];
+            let delay = 500;
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    let x = Math.random() * canvas.width;
+                    let y = canvas.height;
+                    let color = colors[Math.floor(Math.random() * colors.length)];
+                    fireworks.push(new Firework(x, y, color, 5, 5, 40));
+                }, i * delay);
+            }
+        }
+
+        function launchHeartFirework() {
+            setTimeout(() => {
+                let heartParticles = [];
+                for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
+                    let x = Math.cos(angle) * 50 + canvas.width / 2;
+                    let y = Math.sin(angle) * 50 + canvas.height / 2;
+                    heartParticles.push(new Particle(x, y, "red"));
+                }
+                fireworks.push({ exploded: true, particles: heartParticles });
+            }, 7000);
+        }
+
+        function fadeOutEverything() {
+            setTimeout(() => {
+                document.body.style.transition = "opacity 3s";
+                document.body.style.opacity = 0;
+            }, 10000);
+        }
+
+        launchFireworks();
+        launchHeartFirework();
+        fadeOutEverything();
+        animate();
     </script>
+
 </body>
 </html>
